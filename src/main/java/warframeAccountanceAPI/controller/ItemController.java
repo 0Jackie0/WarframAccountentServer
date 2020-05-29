@@ -49,6 +49,34 @@ public class ItemController
 		return itemRepo.findAll();
 	}
 	
+	@GetMapping("api/item/name")
+	public List<Item> getAllNameItemList()
+	{
+		log.info("Get filter name list");
+		return itemRepo.findAllOrderByNameAsc();
+	}
+	
+	@GetMapping("api/item/quantity")
+	public List<Item> getAllQuantityItemList()
+	{
+		log.info("Get filter quantity list");
+		return itemRepo.findAllOrderByQuantityAsc();
+	}
+	
+	@GetMapping("api/item/{typeId}/name")
+	public List<Item> getFilterNameItemList(@PathVariable int typeId)
+	{
+		log.info("Get filter name list");
+		return itemRepo.findAllByTypeOrderByNameAsc(typeId);
+	}
+	
+	@GetMapping("api/item/{typeId}/quantity")
+	public List<Item> getFilterQuantityItemList(@PathVariable int typeId)
+	{
+		log.info("Get filter quantity list");
+		return itemRepo.findAllByTypeOrderByQuantityAsc(typeId);
+	}
+	
 	@PostMapping("api/item/new")
 	public Item addOne(@RequestBody Item newItem)
 	{
@@ -111,6 +139,24 @@ public class ItemController
 		return returnNode;
 	}
 	
+	@PutMapping("api/item/one")
+	public Item updateOne(@RequestBody Item targetItem)
+	{
+		log.info("Update One");
+		
+		return itemRepo.findById(targetItem.getItemId()).map(target -> {
+			
+			target.setType(targetItem.getType());
+			target.setQuantity(targetItem.getQuantity());
+			target.setName(targetItem.getName());
+			target.setEPrice(targetItem.getEPrice());
+			target.setBPrice(targetItem.getBPrice());
+
+			
+			return itemRepo.save(target);
+		}).orElseThrow(() -> new NullPointerException());
+	}
+	
 	@DeleteMapping("api/item/remove/{itemId}")
 	public Item removeItem(@PathVariable int itemId)
 	{
@@ -123,5 +169,17 @@ public class ItemController
 		return target;
 	}
 	
+	@PutMapping("api/item/changeOne/{itemId}/{amount}")
+	public Item changeOneQuantity(@PathVariable int itemId, @PathVariable int amount)
+	{
+		log.info("Item" + itemId + " Quantity change " + amount);
+		return itemRepo.findById(itemId).map(target -> {
+			
+			target.setQuantity(target.getQuantity() + amount);
+			
+			return itemRepo.save(target);
+		}).orElseThrow(() -> new NullPointerException());
+	}
+
 	
 }
