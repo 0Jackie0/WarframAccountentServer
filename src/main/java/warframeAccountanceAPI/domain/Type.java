@@ -3,8 +3,10 @@
  */
 package warframeAccountanceAPI.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
@@ -21,10 +23,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 public class Type
-{
-	private @Id @GeneratedValue int typeId;
+{	
+	@Id 
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TypeSeq")
+	@Column(name="typeid")
+	private int typeId;
 	
 	@NotNull
+	@Column(name="typename")
 	private String typeName;
 
 	

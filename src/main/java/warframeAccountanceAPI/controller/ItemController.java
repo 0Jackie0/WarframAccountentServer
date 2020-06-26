@@ -102,6 +102,7 @@ public class ItemController
 					JsonNode itemName = itemNode.get("name");
 					JsonNode itemEPrice = itemNode.get("eprice");
 					JsonNode itemBPrice = itemNode.get("bprice");
+					JsonNode itemImage = itemNode.get("imageString");
 					
 					if(itemType != null && itemType.isNull() == false)
 					{
@@ -117,11 +118,15 @@ public class ItemController
 					}
 					if(itemEPrice != null && itemEPrice.isNull() == false)
 					{
-						target.setEPrice(itemEPrice.asInt());
+						target.setEprice(itemEPrice.asInt());
 					}
 					if(itemBPrice != null && itemBPrice.isNull() == false)
 					{
-						target.setBPrice(itemBPrice.asInt());
+						target.setBprice(itemBPrice.asInt());
+					}
+					if(itemImage != null && itemImage.isNull() == false)
+					{
+						target.setImageString(itemImage.asText());
 					}
 					
 					return itemRepo.save(target);
@@ -149,8 +154,9 @@ public class ItemController
 			target.setType(targetItem.getType());
 			target.setQuantity(targetItem.getQuantity());
 			target.setName(targetItem.getName());
-			target.setEPrice(targetItem.getEPrice());
-			target.setBPrice(targetItem.getBPrice());
+			target.setEprice(targetItem.getEprice());
+			target.setBprice(targetItem.getBprice());
+			target.setImageString(targetItem.getImageString());
 
 			
 			return itemRepo.save(target);
