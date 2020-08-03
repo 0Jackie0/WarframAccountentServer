@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin
 public class VideoController
 {
-	private final String WELCOME_VIDEO_PATH = "classpath:static/video/welcome_video.mp4";
+	private final String WELCOME_VIDEO_PATH = "classpath:static/video/welcome_video_large.mp4";
 //	private final String PATH_STRING = "C:\\Users\\l1290\\Desktop\\Work\\Spring Workspace\\WarframeAccountanceAPI\\src\\main\\resources\\static\\video\\welcome_video.mp4";
 	
 	@GetMapping("/api/video/respond")
@@ -52,7 +52,6 @@ public class VideoController
 		try 
 		{
 	        File file = ResourceUtils.getFile(WELCOME_VIDEO_PATH);
-	          
 	        
 	        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
 	        response.setHeader("Content-Disposition", "attachment; filename="+file.getName().replace(" ", "_"));
@@ -74,7 +73,7 @@ public class VideoController
 	}
 
 	
-	@GetMapping("/api/video/entity")
+	@GetMapping("/api/video")
 	public ResponseEntity<ResourceRegion> getVideoByRespondEntity (@RequestHeader HttpHeaders headers)
 	{
 		log.info("Get vedio by respond entity");
@@ -110,44 +109,49 @@ public class VideoController
 		long contentLength = video.contentLength();
 		List<HttpRange> rangeList = headers.getRange();
 		
+		long rangeLength = 0;
 		if (rangeList.size() > 0) 
 		{
 			HttpRange range = headers.getRange().get(0);
+			log.info("Has range " + range.getRangeStart(contentLength) + "=--=" + range.getRangeEnd(contentLength));
 			
 			long start = range.getRangeStart(contentLength);
 					
 			long end = range.getRangeEnd(contentLength);
-			
-			long rangeLength = 0;
-			if(1 * 1024 * 1024 > end - start + 1)
-			{
-				rangeLength = end - start + 1;
-			}
-			else
-			{
-				rangeLength = 1 * 1024 * 1024;
-			}
+
+			rangeLength = end - start + 1;//
+//			if(2 * 1024 * 1024 > end - start + 1)
+//			{
+//				rangeLength = end - start + 1;
+//				log.info("video length");
+//			}
+//			else
+//			{
+//				rangeLength = 2 * 1024 * 1024;
+//				log.info("buffer length");
+//			}
 			
 			return new ResourceRegion(video, start, rangeLength);
-		} 
+		}
 		else 
 		{
-			long rangeLength = 0;
-			if(1 * 1024 * 1024 > contentLength)
-			{
-				rangeLength = contentLength;
-			}
-			else
-			{
-				rangeLength = 1 * 1024 * 1024;
-			}
+			log.info("No range");
 			
-			return new ResourceRegion(video, 0, rangeLength);
+//			if(1 * 1024 * 1024 > contentLength)
+//			{
+//				rangeLength = contentLength;
+//			}
+//			else
+//			{
+//				rangeLength = 1 * 1024 * 1024;
+//			}
+			
+			return new ResourceRegion(video, 0, contentLength);
 		}
 	}
 
 	
-	@GetMapping("/api/video/resource")
+	@GetMapping("/api/video/android")
 	@ResponseBody
 	public FileSystemResource getVideoByFileSystemResource (HttpServletResponse response)
 	{
